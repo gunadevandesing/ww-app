@@ -1,21 +1,15 @@
 import PropTypes from "prop-types";
-import { useContext } from "react";
-import { UserContext } from "../App";
+import { useSelector } from "react-redux";
 
 const Message = ({ message }) => {
-  const userDetailsMemo = useContext(UserContext);
-  const { userDetails } = userDetailsMemo;
+  const userDetails = useSelector((state) => state.userDetails);
+
   return (
     <div
       className={`chat-bubble ${
-        message.uid === userDetails.uid ? "right" : ""
+        message.uid === userDetails.username ? "right" : ""
       }`}
     >
-      {/* <img
-        className="chat-bubble__left"
-        src={message.avatar}
-        alt="user avatar"
-      /> */}
       <div className="chat-bubble__right">
         <p className="user-name">{message.name}</p>
         <p className="user-message">{message.text}</p>

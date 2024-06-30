@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   query,
   collection,
@@ -6,12 +7,15 @@ import {
   onSnapshot,
   limit,
 } from "firebase/firestore";
+
 import { db } from "../firebase";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
+import { setMessages } from "../redux/slices/messageDetailsSlice";
 
 const ChatBox = () => {
-  const [messages, setMessages] = useState([]);
+  const dispatch = useDispatch();
+  const messages = useSelector((state) => state.messageDetails.messages);
   const scroll = useRef();
 
   useEffect(() => {
@@ -26,13 +30,17 @@ const ChatBox = () => {
       QuerySnapshot.forEach((doc) => {
         fetchedMessages.push({ ...doc.data(), id: doc.id });
       });
-      const sortedMessages = fetchedMessages.sort(
-        (a, b) => a.createdAt - b.createdAt
-      );
-      setMessages(sortedMessages);
+      const sortedMessages = fetchedMessages
+        .sort((a, b) => a.createdAt - b.createdAt)
+        ?.map((message) => ({
+          ...message,
+          createdAt: `${message.createdAt}`,
+        }));
+      dispatch(setMessages(sortedMessages));
     });
+
     return () => unsubscribe;
-  }, []);
+  }, [dispatch]);
 
   return (
     <main className="chat-box">

@@ -1,13 +1,13 @@
-import { useContext, useState } from "react";
-import { db } from "../firebase";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import PropTypes from "prop-types";
-import { UserContext } from "../App";
+
+import { db } from "../firebase";
 
 const SendMessage = ({ scroll }) => {
+  const userDetails = useSelector((state) => state.userDetails);
   const [message, setMessage] = useState("");
-  const userDetailsMemo = useContext(UserContext);
-  const { userDetails } = userDetailsMemo;
 
   const sendMessage = async (event) => {
     event.preventDefault();
@@ -21,7 +21,7 @@ const SendMessage = ({ scroll }) => {
       name: userDetails.username,
       avatar: "",
       createdAt: serverTimestamp(),
-      uid: userDetails.uid,
+      uid: userDetails.username,
     });
     setMessage("");
     scroll.current.scrollIntoView({ behavior: "smooth" });
